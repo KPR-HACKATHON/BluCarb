@@ -1,11 +1,4 @@
-const sites = [
-  { name: 'Agusan Marsh', coords: [8.95, 125.97], co2: 1240, type: 'Mangrove', status: 'Verified' },
-  { name: 'Tubbataha Reef', coords: [8.85, 119.8], co2: 890, type: 'Seagrass', status: 'Pending' },
-  { name: 'Davao Gulf', coords: [6.8, 125.5], co2: 2100, type: 'Mangrove', status: 'Verified' },
-  { name: 'Malampaya Sound', coords: [11.5, 119.4], co2: 540, type: 'Seaweed', status: 'Pending' },
-]
-
-export default function Sidebar({ selectedSite, onSelectSite }) {
+export default function Sidebar({ sites, selectedSite, onSelectSite }) {
   return (
     <aside className="w-80 bg-gray-900 border-r border-gray-800 flex flex-col overflow-y-auto">
       {/* Map Layer Controls */}
@@ -31,10 +24,10 @@ export default function Sidebar({ selectedSite, onSelectSite }) {
         <div className="space-y-2">
           {sites.map((site) => (
             <div
-              key={site.name}
+              key={site.id}
               onClick={() => onSelectSite(site)}
               className={`rounded-lg p-3 cursor-pointer transition border ${
-                selectedSite?.name === site.name
+                selectedSite?.id === site.id
                   ? 'bg-emerald-900 border-emerald-500'
                   : 'bg-gray-800 border-transparent hover:bg-gray-700'
               }`}
@@ -60,7 +53,7 @@ export default function Sidebar({ selectedSite, onSelectSite }) {
 
       {/* Site Detail Panel */}
       {selectedSite && (
-        <div className="p-4 border-b border-gray-800 bg-gray-850">
+        <div className="p-4 border-b border-gray-800">
           <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
             Site Details
           </h2>
@@ -88,7 +81,7 @@ export default function Sidebar({ selectedSite, onSelectSite }) {
             <div className="flex justify-between">
               <span className="text-xs text-gray-400">Coordinates</span>
               <span className="text-xs text-gray-300 font-mono">
-                {selectedSite.coords[0]}°N, {selectedSite.coords[1]}°E
+                {selectedSite.lat}°N, {selectedSite.lng}°E
               </span>
             </div>
           </div>

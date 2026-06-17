@@ -1,25 +1,18 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { MapContainer, TileLayer, Circle, Popup, useMap } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
-
-const sites = [
-  { name: 'Agusan Marsh', coords: [8.95, 125.97], co2: 1240, type: 'Mangrove', status: 'Verified' },
-  { name: 'Tubbataha Reef', coords: [8.85, 119.8], co2: 890, type: 'Seagrass', status: 'Pending' },
-  { name: 'Davao Gulf', coords: [6.8, 125.5], co2: 2100, type: 'Mangrove', status: 'Verified' },
-  { name: 'Malampaya Sound', coords: [11.5, 119.4], co2: 540, type: 'Seaweed', status: 'Pending' },
-]
 
 function FlyToSite({ selectedSite }) {
   const map = useMap()
   useEffect(() => {
     if (selectedSite) {
-      map.flyTo(selectedSite.coords, 9, { duration: 1.5 })
+      map.flyTo([selectedSite.lat, selectedSite.lng], 9, { duration: 1.5 })
     }
   }, [selectedSite, map])
   return null
 }
 
-export default function MapView({ selectedSite, onSelectSite }) {
+export default function MapView({ sites, selectedSite, onSelectSite }) {
   return (
     <MapContainer
       center={[12.0, 122.0]}
@@ -33,14 +26,14 @@ export default function MapView({ selectedSite, onSelectSite }) {
       <FlyToSite selectedSite={selectedSite} />
       {sites.map((site) => (
         <Circle
-          key={site.name}
-          center={site.coords}
+          key={site.id}
+          center={[site.lat, site.lng]}
           radius={site.co2 * 20}
           pathOptions={{
-            color: selectedSite?.name === site.name ? '#ffffff' : site.status === 'Verified' ? '#10b981' : '#f59e0b',
+            color: selectedSite?.id === site.id ? '#ffffff' : site.status === 'Verified' ? '#10b981' : '#f59e0b',
             fillColor: site.status === 'Verified' ? '#10b981' : '#f59e0b',
-            fillOpacity: selectedSite?.name === site.name ? 0.6 : 0.3,
-            weight: selectedSite?.name === site.name ? 3 : 1,
+            fillOpacity: selectedSite?.id === site.id ? 0.6 : 0.3,
+            weight: selectedSite?.id === site.id ? 3 : 1,
           }}
           eventHandlers={{
             click: () => onSelectSite(site),
