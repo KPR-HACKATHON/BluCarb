@@ -1,11 +1,11 @@
 const sites = [
-  { name: 'Agusan Marsh', type: 'Mangrove', co2: '1,240 tCO₂e', status: 'Verified' },
-  { name: 'Tubbataha Reef', type: 'Seagrass', co2: '890 tCO₂e', status: 'Pending' },
-  { name: 'Davao Gulf', type: 'Mangrove', co2: '2,100 tCO₂e', status: 'Verified' },
-  { name: 'Malampaya Sound', type: 'Seaweed', co2: '540 tCO₂e', status: 'Pending' },
+  { name: 'Agusan Marsh', coords: [8.95, 125.97], co2: 1240, type: 'Mangrove', status: 'Verified' },
+  { name: 'Tubbataha Reef', coords: [8.85, 119.8], co2: 890, type: 'Seagrass', status: 'Pending' },
+  { name: 'Davao Gulf', coords: [6.8, 125.5], co2: 2100, type: 'Mangrove', status: 'Verified' },
+  { name: 'Malampaya Sound', coords: [11.5, 119.4], co2: 540, type: 'Seaweed', status: 'Pending' },
 ]
 
-export default function Sidebar() {
+export default function Sidebar({ selectedSite, onSelectSite }) {
   return (
     <aside className="w-80 bg-gray-900 border-r border-gray-800 flex flex-col overflow-y-auto">
       {/* Map Layer Controls */}
@@ -32,7 +32,12 @@ export default function Sidebar() {
           {sites.map((site) => (
             <div
               key={site.name}
-              className="bg-gray-800 rounded-lg p-3 cursor-pointer hover:bg-gray-700 transition"
+              onClick={() => onSelectSite(site)}
+              className={`rounded-lg p-3 cursor-pointer transition border ${
+                selectedSite?.name === site.name
+                  ? 'bg-emerald-900 border-emerald-500'
+                  : 'bg-gray-800 border-transparent hover:bg-gray-700'
+              }`}
             >
               <div className="flex items-center justify-between mb-1">
                 <span className="text-sm font-medium text-white">{site.name}</span>
@@ -46,12 +51,49 @@ export default function Sidebar() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-xs text-gray-400">{site.type}</span>
-                <span className="text-xs text-emerald-400 font-mono">{site.co2}</span>
+                <span className="text-xs text-emerald-400 font-mono">{site.co2} tCO₂e</span>
               </div>
             </div>
           ))}
         </div>
       </div>
+
+      {/* Site Detail Panel */}
+      {selectedSite && (
+        <div className="p-4 border-b border-gray-800 bg-gray-850">
+          <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+            Site Details
+          </h2>
+          <div className="bg-gray-800 rounded-lg p-3 space-y-2">
+            <div className="flex justify-between">
+              <span className="text-xs text-gray-400">Site Name</span>
+              <span className="text-xs text-white font-medium">{selectedSite.name}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-xs text-gray-400">Ecosystem Type</span>
+              <span className="text-xs text-white">{selectedSite.type}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-xs text-gray-400">Sequestration</span>
+              <span className="text-xs text-emerald-400 font-mono">{selectedSite.co2} tCO₂e</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-xs text-gray-400">CAVCS Status</span>
+              <span className={`text-xs font-medium ${
+                selectedSite.status === 'Verified' ? 'text-emerald-400' : 'text-yellow-400'
+              }`}>
+                {selectedSite.status}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-xs text-gray-400">Coordinates</span>
+              <span className="text-xs text-gray-300 font-mono">
+                {selectedSite.coords[0]}°N, {selectedSite.coords[1]}°E
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Quick Actions */}
       <div className="p-4">

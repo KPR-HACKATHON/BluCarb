@@ -1,4 +1,5 @@
-import { MapContainer, TileLayer, Circle, Popup } from 'react-leaflet'
+import { useEffect, useRef } from 'react'
+import { MapContainer, TileLayer, Circle, Popup, useMap } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 
 const sites = [
@@ -8,31 +9,45 @@ const sites = [
   { name: 'Malampaya Sound', coords: [11.5, 119.4], co2: 540, type: 'Seaweed', status: 'Pending' },
 ]
 
-export default function MapView() {
+function FlyToSite({ selectedSite }) {
+  const map = useMap()
+  useEffect(() => {
+    if (selectedSite) {
+      map.flyTo(selectedSite.coords, 9, { duration: 1.5 })
+    }
+  }, [selectedSite, map])
+  return null
+}
+
+export default function MapView({ selectedSite, onSelectSite }) {
   return (
     <MapContainer
       center={[12.0, 122.0]}
       zoom={6}
-      className="w-full h-full"
-      style={{ background: '#0f172a' }}
+      style={{ height: '100%', width: '100%', background: '#0f172a' }}
     >
       <TileLayer
         url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
         attribution='&copy; OpenStreetMap &copy; CARTO'
       />
+      <FlyToSite selectedSite={selectedSite} />
       {sites.map((site) => (
         <Circle
           key={site.name}
           center={site.coords}
           radius={site.co2 * 20}
           pathOptions={{
-            color: site.status === 'Verified' ? '#10b981' : '#f59e0b',
+            color: selectedSite?.name === site.name ? '#ffffff' : site.status === 'Verified' ? '#10b981' : '#f59e0b',
             fillColor: site.status === 'Verified' ? '#10b981' : '#f59e0b',
-            fillOpacity: 0.3,
+            fillOpacity: selectedSite?.name === site.name ? 0.6 : 0.3,
+            weight: selectedSite?.name === site.name ? 3 : 1,
+          }}
+          eventHandlers={{
+            click: () => onSelectSite(site),
           }}
         >
           <Popup>
-            <div className="text-sm">
+            <div style={{ fontSize: '13px' }}>
               <strong>{site.name}</strong><br />
               Type: {site.type}<br />
               Sequestration: {site.co2} tCO₂e<br />
